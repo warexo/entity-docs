@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address - Entity Documentation</title>
+    
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1' },
+                        surface: { 50: '#fafafa', 100: '#f4f4f5', 200: '#e4e4e7', 800: '#27272a', 900: '#18181b' },
+                    }
+                }
+            }
+        }
+    </script>
+    
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: false,
+            suppressErrorRendering: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#dbeafe',
+                primaryTextColor: '#1e40af',
+                primaryBorderColor: '#3b82f6',
+                lineColor: '#64748b',
+                secondaryColor: '#f1f5f9',
+                tertiaryColor: '#fef3c7'
+            },
+            er: {
+                layoutDirection: 'TB',
+                minEntityWidth: 100,
+                minEntityHeight: 75,
+                entityPadding: 15
+            },
+            securityLevel: 'loose'
+        });
+        
+        // Render mermaid diagrams after page load, suppress errors
+        document.addEventListener('DOMContentLoaded', async function() {
+            const diagrams = document.querySelectorAll('.mermaid');
+            for (const diagram of diagrams) {
+                // Skip hidden diagrams
+                if (diagram.offsetParent === null) continue;
+                try {
+                    const content = diagram.textContent.trim();
+                    if (content && content !== 'erDiagram') {
+                        const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).substr(2, 9), content);
+                        diagram.innerHTML = svg;
+                    }
+                } catch (e) {
+                    console.warn('Mermaid render error:', e);
+                    diagram.innerHTML = '<div class="text-slate-400 text-sm p-4">Diagram konnte nicht gerendert werden</div>';
+                }
+            }
+        });
+    </script>
+    
+        <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body class="bg-surface-50 text-surface-900 antialiased font-sans">
+        <header class="bg-white border-b border-surface-200 sticky top-0 z-50 backdrop-blur-sm bg-white/95">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="../index.html" class="flex items-center gap-3 group">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-sm">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m6 10V7"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-surface-900 group-hover:text-primary-600 transition-colors">Warexo Entities</h1>
+                        <p class="text-xs text-surface-500">API Documentation</p>
+                    </div>
+                </a>
+                <nav class="flex items-center gap-1">
+                    <a href="../index.html" class="flex items-center gap-1 text-white/90 hover:text-white transition-colors text-sm">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Übersicht
+</a>
+                    <a href="../map.html" 
+                       class="flex items-center gap-2 px-3 py-2 rounded-lg text-surface-600 hover:text-surface-900 hover:bg-surface-100 transition-all text-sm font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                        </svg>
+                        Map
+                    </a>
+                    <a href="../data/entities.json" target="_blank" 
+                       class="flex items-center gap-2 px-3 py-2 rounded-lg text-surface-600 hover:text-surface-900 hover:bg-surface-100 transition-all text-sm font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        JSON
+                    </a>
+                    
+                </nav>
+            </div>
+        </div>
+    </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div x-data="{ activeTab: 'columns' }">
+        <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+        <a href="../index.html" class="hover:text-blue-500 transition-colors">Home</a>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span>WAWIBundle</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+        </svg>
+        <span class="text-slate-800 font-medium">Address</span>
+    </nav>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800 mb-1">Address</h1>
+                <div class="text-slate-500 font-mono text-sm">Aggrosoft\WAWIBundle\Entity\Address</div>
+            </div>
+            <div class="flex gap-4">
+                <div class="text-center px-4 py-2 bg-blue-50 rounded-lg">
+                    <div class="text-xl font-bold text-blue-600">20</div>
+                    <div class="text-xs text-blue-600/70">Columns</div>
+                </div>
+                <div class="text-center px-4 py-2 bg-amber-50 rounded-lg">
+                    <div class="text-xl font-bold text-amber-600">4</div>
+                    <div class="text-xs text-amber-600/70">Relations</div>
+                </div>
+                <div class="text-center px-4 py-2 bg-purple-50 rounded-lg">
+                    <div class="text-xl font-bold text-purple-600">32</div>
+                    <div class="text-xs text-purple-600/70">Properties</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="bg-white rounded-xl border border-surface-200 p-6 mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-base font-semibold flex items-center gap-2 text-surface-900">
+            <svg class="w-5 h-5 text-surface-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+            Relationships
+        </h2>
+        <span class="text-xs text-surface-400">Click entity to navigate</span>
+    </div>
+    
+        <div class="flex flex-wrap gap-1.5 mb-4">
+                                <a href="wawibundle-customer.html" 
+           class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-surface-100 hover:bg-primary-50 text-surface-600 hover:text-primary-600 transition-colors font-medium">
+                            <span class="text-amber-500">→</span>
+                        Customer
+        </a>
+                                        <a href="wawibundle-country.html" 
+           class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-surface-100 hover:bg-primary-50 text-surface-600 hover:text-primary-600 transition-colors font-medium">
+                            <span class="text-amber-500">→</span>
+                        Country
+        </a>
+                                        <a href="wawibundle-state.html" 
+           class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-surface-100 hover:bg-primary-50 text-surface-600 hover:text-primary-600 transition-colors font-medium">
+                            <span class="text-amber-500">→</span>
+                        State
+        </a>
+                                        <a href="wawibundle-country.html" 
+           class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-md bg-surface-100 hover:bg-primary-50 text-surface-600 hover:text-primary-600 transition-colors font-medium">
+                            <span class="text-amber-500">→</span>
+                        Country
+        </a>
+                    </div>
+    
+        <div class="diagram-container relative bg-surface-50 rounded-lg overflow-hidden" style="height: 350px;">
+        <div class="diagram-controls absolute top-2 right-2 z-10 flex gap-0.5 bg-white rounded-lg shadow-sm border border-surface-200 p-0.5">
+            <button onclick="zoomDiagram(this, 1.2)" class="w-7 h-7 flex items-center justify-center hover:bg-surface-100 rounded text-surface-600 font-medium text-sm" title="Zoom In">+</button>
+            <button onclick="zoomDiagram(this, 0.8)" class="w-7 h-7 flex items-center justify-center hover:bg-surface-100 rounded text-surface-600 font-medium text-sm" title="Zoom Out">−</button>
+            <button onclick="resetDiagram(this)" class="w-7 h-7 flex items-center justify-center hover:bg-surface-100 rounded text-surface-500" title="Reset">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button onclick="fitDiagram(this)" class="w-7 h-7 flex items-center justify-center hover:bg-surface-100 rounded text-surface-500 text-xs font-medium" title="Fit">Fit</button>
+        </div>
+        <div class="diagram-viewport w-full h-full overflow-hidden cursor-grab active:cursor-grabbing">
+            <div class="diagram-content" style="transform-origin: 0 0;">
+                <pre class="mermaid">
+erDiagram
+    Address {
+                string id PK
+                integer sort
+                boolean defaultBillingAddress
+                boolean defaultShippingAddress
+                string foreignId
+                string foreignCountryId
+                        ___ ___more___
+            }
+                Address }o--|| Customer : "customer"
+        Customer {
+        int id PK
+    }
+                Address }o--|| Country : "country"
+        Country {
+        int id PK
+    }
+                Address }o--|| State : "state"
+        State {
+        int id PK
+    }
+                Address }o--|| Country : "exportCountry"
+        Country {
+        int id PK
+    }
+                    </pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Store entity links for diagram clicking
+window.entityLinks = window.entityLinks || {};
+window.entityLinks['Customer'] = 'wawibundle-customer.html';
+window.entityLinks['Country'] = 'wawibundle-country.html';
+window.entityLinks['State'] = 'wawibundle-state.html';
+window.entityLinks['Country'] = 'wawibundle-country.html';
+
+// Diagram state management
+const diagramStates = new WeakMap();
+
+function getDiagramState(container) {
+    if (!diagramStates.has(container)) {
+        diagramStates.set(container, { scale: 1, x: 0, y: 0, isDragging: false });
+    }
+    return diagramStates.get(container);
+}
+
+function applyTransform(container) {
+    const content = container.querySelector('.diagram-content');
+    const state = getDiagramState(container);
+    content.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+}
+
+function zoomDiagram(btn, factor) {
+    const container = btn.closest('.diagram-container');
+    const state = getDiagramState(container);
+    state.scale = Math.min(Math.max(state.scale * factor, 0.2), 4);
+    applyTransform(container);
+}
+
+function resetDiagram(btn) {
+    const container = btn.closest('.diagram-container');
+    const state = getDiagramState(container);
+    state.scale = 1;
+    state.x = 0;
+    state.y = 0;
+    applyTransform(container);
+}
+
+function fitDiagram(btn) {
+    const container = btn.closest('.diagram-container');
+    const content = container.querySelector('.diagram-content');
+    const viewport = container.querySelector('.diagram-viewport');
+    const state = getDiagramState(container);
+    
+    const svg = content.querySelector('svg');
+    if (!svg) return;
+    
+    const svgRect = svg.getBoundingClientRect();
+    const viewRect = viewport.getBoundingClientRect();
+    const scaleX = (viewRect.width - 40) / (svgRect.width / state.scale);
+    const scaleY = (viewRect.height - 40) / (svgRect.height / state.scale);
+    state.scale = Math.min(scaleX, scaleY, 1);
+    state.x = 20;
+    state.y = 20;
+    applyTransform(container);
+}
+
+// Initialize drag and wheel zoom
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.diagram-container').forEach(container => {
+        const viewport = container.querySelector('.diagram-viewport');
+        if (!viewport) return;
+        
+        let startX, startY, startState;
+        
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            const state = getDiagramState(container);
+            state.isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            startState = { x: state.x, y: state.y };
+            viewport.style.cursor = 'grabbing';
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            const state = getDiagramState(container);
+            if (!state.isDragging) return;
+            state.x = startState.x + (e.clientX - startX);
+            state.y = startState.y + (e.clientY - startY);
+            applyTransform(container);
+        });
+        
+        document.addEventListener('mouseup', () => {
+            const state = getDiagramState(container);
+            state.isDragging = false;
+            viewport.style.cursor = 'grab';
+        });
+        
+        viewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const state = getDiagramState(container);
+            const factor = e.deltaY > 0 ? 0.9 : 1.1;
+            const newScale = Math.min(Math.max(state.scale * factor, 0.2), 4);
+            
+            const rect = viewport.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            const scaleDiff = newScale - state.scale;
+            state.x -= mouseX * scaleDiff / state.scale;
+            state.y -= mouseY * scaleDiff / state.scale;
+            state.scale = newScale;
+            
+            applyTransform(container);
+        }, { passive: false });
+    });
+
+    // Make diagram entities clickable after Mermaid renders
+    setTimeout(function() {
+        document.querySelectorAll('.er .entityLabel, .entityBox, text.er').forEach(function(el) {
+            const text = (el.textContent || '').trim().split(/[\s{]/)[0];
+            if (text && window.entityLinks[text]) {
+                el.style.cursor = 'pointer';
+                el.parentElement.style.cursor = 'pointer';
+                const clickHandler = function(e) {
+                    e.stopPropagation();
+                    window.location.href = window.entityLinks[text];
+                };
+                el.addEventListener('click', clickHandler);
+                if (el.parentElement) {
+                    el.parentElement.addEventListener('click', clickHandler);
+                }
+            }
+        });
+    }, 1500);
+});
+</script>
+
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Metadaten
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                <span class="text-slate-500 text-sm w-24">Tabelle</span>
+                <code class="text-sm bg-slate-200/50 px-2 py-1 rounded">address</code>
+            </div>
+            <div class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
+                <span class="text-slate-500 text-sm w-24">Bundle</span>
+                <span class="text-sm px-2 py-1 rounded-full bg-blue-100 text-blue-700">WAWIBundle</span>
+            </div>
+                                                <div class="flex items-start gap-3 p-3 bg-slate-50 rounded-lg md:col-span-2">
+                <span class="text-slate-500 text-sm w-24 shrink-0">Interfaces</span>
+                <div class="flex flex-wrap gap-2">
+                                        <code class="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded">IPrototype</code>
+                                    </div>
+            </div>
+                                </div>
+    </div>
+
+        <div class="flex gap-1 mb-4 bg-slate-100 p-1 rounded-lg overflow-x-auto">
+        <button 
+            @click="activeTab = 'columns'"
+            :class="activeTab === 'columns' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-600 hover:text-slate-800'"
+            class="flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all whitespace-nowrap"
+        >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"/>
+            </svg>
+            Columns <span class="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full">20</span>
+        </button>
+        <button 
+            @click="activeTab = 'accessors'"
+            :class="activeTab === 'accessors' ? 'bg-white shadow-sm text-purple-600' : 'text-slate-600 hover:text-slate-800'"
+            class="flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all whitespace-nowrap"
+        >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Twig Properties <span class="text-xs bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full">32</span>
+        </button>
+        <button 
+            @click="activeTab = 'relations'"
+            :class="activeTab === 'relations' ? 'bg-white shadow-sm text-amber-600' : 'text-slate-600 hover:text-slate-800'"
+            class="flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all whitespace-nowrap"
+        >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+            </svg>
+            Relations <span class="text-xs bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded-full">4</span>
+        </button>
+        <button 
+            @click="activeTab = 'indexes'"
+            :class="activeTab === 'indexes' ? 'bg-white shadow-sm text-emerald-600' : 'text-slate-600 hover:text-slate-800'"
+            class="flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all whitespace-nowrap"
+        >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+            Indexes <span class="text-xs bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full">0</span>
+        </button>
+    </div>
+
+        <div x-show="activeTab === 'columns'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-4 border-b border-slate-100">
+        <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input 
+                type="text" 
+                placeholder="Filter Columns..." 
+                class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-sm"
+                onkeyup="filterTable(this, 'columns-table')"
+            >
+        </div>
+    </div>
+
+        <div class="overflow-x-auto">
+        <table id="columns-table" class="w-full">
+            <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Property</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Column</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Flags</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Twig Access</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">id</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">id</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(36)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700">PK</span>
+                                                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">AUTO</span>
+                                                                                                            </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">id</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">sort</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">sort</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            integer(11)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">sort</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">defaultBillingAddress</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">defaultBillingAddress</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            boolean</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">defaultBillingAddress</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">defaultShippingAddress</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">defaultShippingAddress</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            boolean</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">defaultShippingAddress</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">foreignId</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">foreign_id</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(36)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">foreignId</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">foreignCountryId</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">foreign_country_id</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(36)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">foreignCountryId</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">foreignCustomerId</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">foreign_customer_id</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(36)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">foreignCustomerId</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">title</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">title</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">title</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">company</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">company</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">company</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">salutation</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">salutation</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(128)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">salutation</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">firstName</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">firstName</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">firstName</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">lastName</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">lastName</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">lastName</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">additionalInfo</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">additionalInfo</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">additionalInfo</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">street</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">street</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">street</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">city</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">city</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(255)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">city</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">zip</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">zip</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(128)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">zip</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">phone</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">phone</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(128)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">phone</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">fax</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">fax</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(128)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">fax</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">vatId</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">vatId</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(50)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">vatId</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">status</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-slate-500">status</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <code class="text-sm text-blue-600">
+                            string(128)</code>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1">
+                                                                                                                                        </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">status</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                            </tbody>
+        </table>
+    </div>
+</div>
+    </div>
+
+        <div x-show="activeTab === 'accessors'" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-4 bg-purple-50 border-b border-purple-100">
+        <p class="text-sm text-purple-700">
+            <strong>Tipp:</strong> Diese Properties sind über Getter/Setter-Methoden in Twig verfügbar.
+            Verwende <code class="bg-purple-100 px-1 rounded">{{ entity.propertyName }}</code> zum Lesen.
+        </p>
+    </div>
+
+        <div class="p-4 border-b border-slate-100">
+        <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input 
+                type="text" 
+                placeholder="Filter Properties..." 
+                class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none text-sm"
+                onkeyup="filterTable(this, 'accessors-table')"
+            >
+        </div>
+    </div>
+
+        <div class="overflow-x-auto">
+        <table id="accessors-table" class="w-full">
+            <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Property</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Access</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Twig Usage</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Methods</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Return Type</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">fullAddress</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">fullAddress</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getFullAddress()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">company</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">company</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getCompany()</code>
+                                                                                    <br><code class="text-blue-600">setCompany()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">fullName</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">fullName</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getFullName()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">titleSalutation</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">titleSalutation</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getTitleSalutation()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">streetWithoutHouseNumber</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">streetWithoutHouseNumber</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getStreetWithoutHouseNumber()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">houseNumber</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">houseNumber</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getHouseNumber()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">streetParts</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">streetParts</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getStreetParts()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">id</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">id</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getId()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">foreignId</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">foreignId</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getForeignId()</code>
+                                                                                    <br><code class="text-blue-600">setForeignId()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">foreignCountryId</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">foreignCountryId</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getForeignCountryId()</code>
+                                                                                    <br><code class="text-blue-600">setForeignCountryId()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">foreignCustomerId</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">foreignCustomerId</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getForeignCustomerId()</code>
+                                                                                    <br><code class="text-blue-600">setForeignCustomerId()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">title</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">title</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getTitle()</code>
+                                                                                    <br><code class="text-blue-600">setTitle()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">firstName</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">firstName</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getFirstName()</code>
+                                                                                    <br><code class="text-blue-600">setFirstName()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">lastName</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">lastName</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getLastName()</code>
+                                                                                    <br><code class="text-blue-600">setLastName()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">street</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">street</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getStreet()</code>
+                                                                                    <br><code class="text-blue-600">setStreet()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">city</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">city</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getCity()</code>
+                                                                                    <br><code class="text-blue-600">setCity()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">zip</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">zip</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getZip()</code>
+                                                                                    <br><code class="text-blue-600">setZip()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">phone</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">phone</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getPhone()</code>
+                                                                                    <br><code class="text-blue-600">setPhone()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">fax</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">fax</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getFax()</code>
+                                                                                    <br><code class="text-blue-600">setFax()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">customer</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">customer</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getCustomer()</code>
+                                                                                    <br><code class="text-blue-600">setCustomer()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">Aggrosoft\WAWIBundle\Entity\Customer</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">country</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">country</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getCountry()</code>
+                                                                                    <br><code class="text-blue-600">setCountry()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">Aggrosoft\WAWIBundle\Entity\Country</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">state</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">state</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getState()</code>
+                                                                                    <br><code class="text-blue-600">setState()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">\Aggrosoft\WAWIBundle\Entity\State</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">vatId</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">vatId</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getVatId()</code>
+                                                                                    <br><code class="text-blue-600">setVatId()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">salutation</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">salutation</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getSalutation()</code>
+                                                                                    <br><code class="text-blue-600">setSalutation()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">additionalInfo</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">additionalInfo</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getAdditionalInfo()</code>
+                                                                                    <br><code class="text-blue-600">setAdditionalInfo()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">defaultShippingAddress</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">defaultShippingAddress</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getDefaultShippingAddress()</code>
+                                                                                    <br><code class="text-blue-600">setDefaultShippingAddress()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">boolean</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">defaultBillingAddress</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">defaultBillingAddress</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getDefaultBillingAddress()</code>
+                                                                                    <br><code class="text-blue-600">setDefaultBillingAddress()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">mixed</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">northIrland</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">northIrland</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">isNorthIrland()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors bg-purple-50/30">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">eUSpecialArea</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-600" title="Computed Property">Computed</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">eUSpecialArea</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">isEUSpecialArea()</code>
+                                                                                </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">sort</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">sort</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getSort()</code>
+                                                                                    <br><code class="text-blue-600">setSort()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">integer</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">status</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">status</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getStatus()</code>
+                                                                                    <br><code class="text-blue-600">setStatus()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">string</code>
+                                            </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors ">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center gap-2">
+                            <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">exportCountry</code>
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-500" title="Hat zugehörige DB-Column">DB</span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex gap-1">
+                                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                read
+                            </span>
+                                                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                                write
+                            </span>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1">
+                                                        <div class="twig-code text-xs">
+                                <span class="text-amber-600">{{</span>
+                                <span class="text-slate-600"> entity.</span><span class="text-purple-600">exportCountry</span>
+                                <span class="text-amber-600"> }}</span>
+                            </div>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="space-y-1 text-xs">
+                                                        <code class="text-emerald-600">getExportCountry()</code>
+                                                                                    <br><code class="text-blue-600">setExportCountry()</code>
+                                                    </div>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-600">\Aggrosoft\WAWIBundle\Entity\Country</code>
+                                            </td>
+                </tr>
+                            </tbody>
+        </table>
+    </div>
+</div>
+    </div>
+
+        <div x-show="activeTab === 'relations'" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-4 border-b border-slate-100">
+        <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input 
+                type="text" 
+                placeholder="Filter Relations..." 
+                class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-sm"
+                onkeyup="filterTable(this, 'relations-table')"
+            >
+        </div>
+    </div>
+
+        <div class="overflow-x-auto">
+        <table id="relations-table" class="w-full">
+            <thead class="bg-slate-50 border-b border-slate-100">
+                <tr>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Property</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Target Entity</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Mapped By</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Inversed By</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Cascade</th>
+                    <th class="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Twig Access</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">customer</code>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                            ManyToOne
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <a href="wawibundle-customer.html" class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            Customer
+                        </a>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-500">addresses</code>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code text-xs">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">customer</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">country</code>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                            ManyToOne
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <a href="wawibundle-country.html" class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            Country
+                        </a>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-500">states</code>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code text-xs">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">country</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">state</code>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                            ManyToOne
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <a href="wawibundle-state.html" class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            State
+                        </a>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <code class="text-xs text-slate-500">addresses</code>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code text-xs">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">state</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <code class="text-sm bg-slate-100 px-2 py-0.5 rounded text-slate-700">exportCountry</code>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                            ManyToOne
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                                                <a href="wawibundle-country.html" class="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            Country
+                        </a>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                                                <span class="text-slate-400">-</span>
+                                            </td>
+                    <td class="px-4 py-3">
+                        <span class="twig-code text-xs">
+                            <span class="text-amber-600">{{</span>
+                            <span class="text-slate-600"> entity.</span><span class="text-purple-600">exportCountry</span>
+                            <span class="text-amber-600"> }}</span>
+                        </span>
+                    </td>
+                </tr>
+                            </tbody>
+        </table>
+    </div>
+</div>
+    </div>
+
+        <div x-show="activeTab === 'indexes'" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-8 text-center text-slate-500">
+    <svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+    </svg>
+    Keine Indexes definiert
+</div>
+    </div>
+</div>
+    </main>
+
+        <footer class="border-t border-slate-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-slate-500 text-sm">
+            Generated 31.01.2026 04:04 · 
+            <a href="https://github.com/warexo" class="text-blue-500 hover:underline">Warexo</a>
+        </div>
+    </footer>
+
+        <script src="../assets/app.js"></script>
+</body>
+</html>
